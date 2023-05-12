@@ -345,11 +345,12 @@ def getCRISPRessoArgParser(parserTitle="CRISPResso Parameters", requiredParams={
     Please use with caution since increasing this parameter will significantly increase the memory required to run CRISPResso. Can be set to \'max\'.',
                         default='1')
 
-    # processing of aligned bam files
-    parser.add_argument('--bam_input', type=str, help='Aligned reads for processing in bam format', default='')
-    parser.add_argument('--bam_chr_loc', type=str,
-                        help='Chromosome location in bam for reads to process. For example: "chr1:50-100" or "chrX".',
-                        default='')
+    #processing of paired fastq files (without flash merging)
+    parser.add_argument('--process_paired_fastq',  help='If true, paired ends reads are aligned to the reference sequence and then merged (instead of merging before alignment by flash)', action='store_true')
+
+    #processing of aligned bam files
+    parser.add_argument('--bam_input', type=str,  help='Aligned reads for processing in bam format', default='')
+    parser.add_argument('--bam_chr_loc', type=str,  help='Chromosome location in bam for reads to process. For example: "chr1:50-100" or "chrX".', default='')
 
     # deprecated params
     parser.add_argument('--save_also_png', default=False,
@@ -1188,7 +1189,7 @@ def force_merge_pairs(r1_filename, r2_filename, output_filename):
         id2 = f2.readline()
         seq2 = reverse_complement(f2.readline().strip()) + "\n"
         plus2 = f2.readline()
-        qual2 = f2.readline()
+        qual2 = f2.readline().strip()[::-1]
 
         f_out.write(id1 + seq1 + seq2 + plus1 + qual1 + qual2)
 
